@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.FirstFragment">
+
+    <TextView
+        android:id="@+id/textview_i"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:fontFamily="@font/roboto"
+        android:text="i"
+        android:textColor="#FFC107"
+        android:textSize="@dimen/_24ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Movie"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_24ssp"
+        app:layout_constraintStart_toEndOf="@id/textview_i"
+        app:layout_constraintTop_toTopOf="@id/textview_i" />
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/avatar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_launcher_background"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textview_i"
+        app:riv_corner_radius="30dp" />
+
+    <EditText
+        android:id="@+id/search_input"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/_18sdp"
+        android:background="@drawable/drawable_search_input"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="@dimen/_2sdp"
+        android:hint="Search For a Movie ..."
+        android:maxLines="1"
+        android:paddingHorizontal="@dimen/_8sdp"
+        android:paddingVertical="@dimen/_2sdp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/primaryLight"
+        android:textCursorDrawable="@null"
+        app:layout_constraintEnd_toEndOf="@id/avatar"
+        app:layout_constraintStart_toStartOf="@id/textview_i"
+        app:layout_constraintTop_toBottomOf="@id/textview_i" />
+
+    <TextView
+        android:id="@+id/textview_p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:fontFamily="@font/orienta"
+        android:text="Popular"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_18ssp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/search_input"
+        app:layout_constraintTop_toBottomOf="@id/search_input" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_popular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="@id/search_input"
+        app:layout_constraintStart_toStartOf="@id/textview_p"
+        app:layout_constraintTop_toBottomOf="@id/textview_p" />
+
+    <TextView
+        android:id="@+id/textview_s"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:fontFamily="@font/orienta"
+        android:text="Coming Soon"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_18ssp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/recycler_popular"
+        app:layout_constraintTop_toBottomOf="@id/recycler_popular" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_up_coming"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/search_input"
+        app:layout_constraintStart_toStartOf="@id/textview_s"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:layout_constraintTop_toBottomOf="@id/textview_s" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
