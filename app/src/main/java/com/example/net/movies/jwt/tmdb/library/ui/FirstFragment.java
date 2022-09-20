@@ -10,18 +10,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.net.movies.jwt.tmdb.library.R;
 import com.example.net.movies.jwt.tmdb.library.adapters.HorizontalAdapter;
 import com.example.net.movies.jwt.tmdb.library.adapters.PopularAdapter;
 import com.example.net.movies.jwt.tmdb.library.databinding.FragmentFirstBinding;
-import com.example.net.movies.jwt.tmdb.library.model.coming.ComingList;
-import com.example.net.movies.jwt.tmdb.library.model.popular.PopularList;
-import com.example.net.movies.jwt.tmdb.library.model.popular.PopularMovie;
+import com.example.net.movies.jwt.tmdb.library.model.movie.Movie;
 import com.example.net.movies.jwt.tmdb.library.utils.Callbacks;
 import com.example.net.movies.jwt.tmdb.library.utils.Constants;
 import com.example.net.movies.jwt.tmdb.library.utils.ItemDecorator;
@@ -66,51 +63,42 @@ public class FirstFragment extends Fragment implements Callbacks.HandleSharedEle
         super.onActivityCreated(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         viewModel.getPopularMovies(Constants.API_KEY)
-                .observe(getViewLifecycleOwner(), new Observer<PopularList>() {
-                    @Override
-                    public void onChanged(PopularList popularList) {
+                .observe(getViewLifecycleOwner(), popularList -> {
 //                        Log.d("First Fragment",""+popularList.getResults().size());
-                        if (popularList != null && popularList.getResults() != null) {
-                            Log.d("----", "---------------------------------------------------------------------------------------------------");
-                            Log.e("First Fragment", popularList.getResults().size() + "");
-                            Log.d("----", "---------------------------------------------------------------------------------------------------");
-                            popularAdapter.setMovies(popularList.getResults());
-                            popularAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.d("----", "---------------------------------------------------------------------------------------------------");
-                            Log.e("First Fragment", "Popular List is Null");
-                            Log.d("----", "---------------------------------------------------------------------------------------------------");
-                        }
+                    if (popularList != null && popularList.getResults() != null) {
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        Log.e("First Fragment", popularList.getResults().size() + "");
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        popularAdapter.setMovies(popularList.getResults());
+                        popularAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        Log.e("First Fragment", "Popular List is Null");
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
                     }
                 });
         viewModel.getComingMovies(Constants.API_KEY)
-                .observe(getViewLifecycleOwner(), new Observer<ComingList>() {
-                    @Override
-                    public void onChanged(ComingList comingList) {
+                .observe(getViewLifecycleOwner(), comingList -> {
 //                        Log.d("First Fragment",""+popularList.getResults().size());
-                        if (comingList != null && comingList.getResults() != null) {
-                            Log.d("----", "---------------------------------------------------------------------------------------------------");
-                            Log.e("First Fragment", comingList.getResults().size() + "");
-                            Log.d("----", "---------------------------------------------------------------------------------------------------");
-                            comingAdapter.setMovies(comingList.getResults());
-                            comingAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.d("----", "---------------------------------------------------------------------------------------------------");
-                            Log.e("First Fragment", "Popular List is Null");
-                            Log.d("----", "---------------------------------------------------------------------------------------------------");
-                        }
+                    if (comingList != null && comingList.getResults() != null) {
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        Log.e("First Fragment", comingList.getResults().size() + "");
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        comingAdapter.setMovies(comingList.getResults());
+                        comingAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        Log.e("First Fragment", "Popular List is Null");
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
                     }
                 });
 
         viewModel.isPopularLoading()
-                .observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                    @Override
-                    public void onChanged(Boolean bool) {
-                        if (bool)
-                            Toast.makeText(getContext(), "Loading Movies in Progress", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(getContext(), "Loading Movies is Done", Toast.LENGTH_SHORT).show();
-                    }
+                .observe(getViewLifecycleOwner(), bool -> {
+                    if (bool)
+                        Toast.makeText(getContext(), "Loading Movies in Progress", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getContext(), "Loading Movies is Done", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -121,8 +109,10 @@ public class FirstFragment extends Fragment implements Callbacks.HandleSharedEle
     }
 
     @Override
-    public void onMovieClick(PopularMovie movie) {
+    public void onMovieClick(Movie movie, View view) {
+        NavDirections directions = FirstFragmentDirections.actionFirstFragmentToSecondFragment();
+        directions.getArguments().putInt("movie_id", movie.getId());
         NavHostFragment.findNavController(FirstFragment.this)
-                .navigate(R.id.action_FirstFragment_to_SecondFragment);
+                .navigate(directions);
     }
 }

@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.net.movies.jwt.tmdb.library.databinding.PopularMovieLayoutBinding;
-import com.example.net.movies.jwt.tmdb.library.model.popular.PopularMovie;
+import com.example.net.movies.jwt.tmdb.library.model.movie.Movie;
 import com.example.net.movies.jwt.tmdb.library.utils.Callbacks;
 import com.example.net.movies.jwt.tmdb.library.utils.Constants;
 import com.squareup.picasso.Picasso;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHolder> {
 
-    private List<PopularMovie> movies;
+    private List<Movie> movies;
     private Callbacks.HandleSharedElement listener;
 
     public PopularAdapter(Callbacks.HandleSharedElement listener) {
@@ -26,7 +26,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
         this.listener = listener;
     }
 
-    public void setMovies(List<PopularMovie> movies) {
+    public void setMovies(List<Movie> movies) {
         this.movies = movies;
     }
 
@@ -56,7 +56,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
             binding = itemView;
         }
 
-        public void fillUI(PopularMovie movie) {
+        public void fillUI(Movie movie) {
             binding.title.setText(movie.getTitle());
             String url = Constants.IMAGE_BASE_URL + (movie.getPosterPath() == null ? movie.getPosterPath() : movie.getBackdropPath());
             float vote = (float) (movie.getVoteAverage() / 2);
@@ -65,8 +65,8 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                     .into(binding.poster);
             binding.rating.setRating(vote);
             binding.poster.setOnClickListener(v -> {
-                Log.d("fillUI", "" + movie.getTitle() + " , " + movie.getVoteAverage() + " , " + vote);
-                listener.onMovieClick(movie);
+                Log.d("fillUI", "" + movie.getTitle() + " , " + movie.getId() + " , " + movie.getVoteAverage() + " , " + vote);
+                listener.onMovieClick(movie, binding.poster);
             });
         }
     }

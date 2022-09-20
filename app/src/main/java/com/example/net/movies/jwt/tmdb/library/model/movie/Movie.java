@@ -1,9 +1,9 @@
-package com.example.net.movies.jwt.tmdb.library.model.popular;
+package com.example.net.movies.jwt.tmdb.library.model.movie;
 
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class PopularMovie {
+public class Movie {
 
 	@SerializedName("overview")
 	private String overview;

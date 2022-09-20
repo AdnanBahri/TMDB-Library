@@ -18,14 +18,10 @@ public class ItemDecorator extends RecyclerView.ItemDecoration {
     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
         int space = Constants.dpToPx(view.getContext(), dp) / 2;
-        if (parent.getChildAdapterPosition(view) == 0) {
+        if (parent.getChildAdapterPosition(view) != parent.getChildCount() - 1) {
             outRect.right = space;
-        } else if (parent.getChildAdapterPosition(view) == parent.getChildCount() - 1) {
-            outRect.left = space;
-        } else {
-            outRect.right = space;
-            outRect.left = space;
         }
+        outRect.left = space;
     }
 
 

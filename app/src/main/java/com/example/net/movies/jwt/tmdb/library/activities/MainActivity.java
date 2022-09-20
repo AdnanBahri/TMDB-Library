@@ -1,25 +1,21 @@
 package com.example.net.movies.jwt.tmdb.library.activities;
 
 import android.os.Bundle;
-
-import com.example.net.movies.jwt.tmdb.library.R;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.View;
-
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.net.movies.jwt.tmdb.library.R;
 import com.example.net.movies.jwt.tmdb.library.databinding.ActivityMainBinding;
 
-import android.view.Menu;
-import android.view.MenuItem;
-
 public class MainActivity extends AppCompatActivity {
+
+    // Todo : Create Animations between Destinations
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;

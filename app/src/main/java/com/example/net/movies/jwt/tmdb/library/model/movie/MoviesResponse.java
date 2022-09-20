@@ -1,9 +1,9 @@
-package com.example.net.movies.jwt.tmdb.library.model.popular;
+package com.example.net.movies.jwt.tmdb.library.model.movie;
 
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class PopularList {
+public class MoviesResponse {
 
 	@SerializedName("page")
 	private int page;
@@ -12,7 +12,7 @@ public class PopularList {
 	private int totalPages;
 
 	@SerializedName("results")
-	private List<PopularMovie> movies;
+	private List<Movie> movies;
 
 	@SerializedName("total_results")
 	private int totalResults;
@@ -25,7 +25,7 @@ public class PopularList {
 		return totalPages;
 	}
 
-	public List<PopularMovie> getResults(){
+	public List<Movie> getResults(){
 		return movies;
 	}
 
