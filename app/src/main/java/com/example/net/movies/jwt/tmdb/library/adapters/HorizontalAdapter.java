@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.net.movies.jwt.tmdb.library.callbacks.HandleComingMovieClick;
 import com.example.net.movies.jwt.tmdb.library.databinding.MovieHorizontaleLayoutBinding;
 import com.example.net.movies.jwt.tmdb.library.model.coming.ComingMovie;
 import com.example.net.movies.jwt.tmdb.library.utils.Constants;
@@ -18,9 +19,11 @@ import java.util.List;
 public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.ViewHolder> {
 
     private List<ComingMovie> movies;
+    private HandleComingMovieClick listener;
 
-    public HorizontalAdapter() {
+    public HorizontalAdapter(HandleComingMovieClick listener) {
         movies = new ArrayList<>();
+        this.listener = listener;
     }
 
     public void setMovies(List<ComingMovie> movies) {
@@ -67,7 +70,10 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Vi
                     binding.categories.append(Constants.categories.get(movie.getGenreIds().get(i)) + "");
             }
             binding.release.setText(movie.getReleaseDate());
-            binding.movie.setOnClickListener(v -> Log.d("fillUI", "" + movie.getTitle() + " , " + url));
+            binding.movie.setOnClickListener(v -> {
+                Log.d("fillUI", "" + movie.getTitle() + " , " + movie.getId() + " , " + url);
+                listener.onComingMovieClick(movie, binding.getRoot());
+            });
         }
     }
 }

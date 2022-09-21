@@ -13,8 +13,7 @@ public class Constants {
     public static final String BASE_URL = "https://api.themoviedb.org/3/";
     public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w780";
 
-    private static final Map<Integer, String> genres_ids = new HashMap<Integer, String>()
-    {
+    private static final Map<Integer, String> genres_ids = new HashMap<Integer, String>() {
         {
             put(28, "Action");
             put(12, "Adventure");
@@ -35,7 +34,9 @@ public class Constants {
             put(53, "Thriller");
             put(10752, "War");
             put(37, "Western");
-        };
+        }
+
+        ;
     };
 
     public static final Map<Integer, String> categories = Collections.unmodifiableMap(genres_ids);
@@ -44,5 +45,9 @@ public class Constants {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
+    }
+
+    public static String formatTime(int s) {
+        return String.valueOf(s / 60).concat("h ").concat(String.valueOf(s % 60));
     }
 }

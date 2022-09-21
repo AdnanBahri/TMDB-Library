@@ -1,6 +1,7 @@
 package com.example.net.movies.jwt.tmdb.library.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,19 +15,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.net.movies.jwt.tmdb.library.adapters.CastAdapter;
 import com.example.net.movies.jwt.tmdb.library.adapters.MovieAdapter;
+import com.example.net.movies.jwt.tmdb.library.callbacks.HandleMovieClick;
 import com.example.net.movies.jwt.tmdb.library.databinding.FragmentSecondBinding;
 import com.example.net.movies.jwt.tmdb.library.model.credits.CreditsList;
 import com.example.net.movies.jwt.tmdb.library.model.details.MovieDetails;
 import com.example.net.movies.jwt.tmdb.library.model.movie.Movie;
 import com.example.net.movies.jwt.tmdb.library.model.movie.MoviesResponse;
-import com.example.net.movies.jwt.tmdb.library.utils.Callbacks;
 import com.example.net.movies.jwt.tmdb.library.utils.Constants;
 import com.example.net.movies.jwt.tmdb.library.utils.GridDecoration;
 import com.example.net.movies.jwt.tmdb.library.utils.ItemDecorator;
 import com.example.net.movies.jwt.tmdb.library.viewmodel.HomeViewModel;
 import com.squareup.picasso.Picasso;
 
-public class SecondFragment extends Fragment implements Callbacks.HandleSharedElement {
+public class SecondFragment extends Fragment implements HandleMovieClick {
 
     // Todo: Add Room Database To Store Favorites Movies
     // Todo: Create Watch_Now and Watch_list functionalities
@@ -49,17 +50,19 @@ public class SecondFragment extends Fragment implements Callbacks.HandleSharedEl
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d("Second Fragment", getArguments().getInt("movie_id") + "");
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        viewModel.getMovieDetails(getArguments().getInt("movie_id"), Constants.API_KEY)
+        int movie_id = getArguments().getInt("movie_id");
+        viewModel.getMovieDetails(movie_id, Constants.API_KEY)
                 .observe(getViewLifecycleOwner(), this::populateUI);
-        viewModel.getMovieCredits(getArguments().getInt("movie_id"), Constants.API_KEY)
+        viewModel.getMovieCredits(movie_id, Constants.API_KEY)
                 .observe(getViewLifecycleOwner(), this::castRecyclerUI);
-        viewModel.getMovieSimilar(getArguments().getInt("movie_id"), Constants.API_KEY)
+        viewModel.getMovieSimilar(movie_id, Constants.API_KEY)
                 .observe(getViewLifecycleOwner(), this::similarRecyclerUI);
     }
 
@@ -83,10 +86,10 @@ public class SecondFragment extends Fragment implements Callbacks.HandleSharedEl
 
     private void populateUI(MovieDetails details) {
         Picasso.get()
-                .load(Constants.IMAGE_BASE_URL + details.getPosterPath())
+                .load(Constants.IMAGE_BASE_URL + (details.getPosterPath() != null ? details.getPosterPath() : details.getBackdropPath()))
                 .into(binding.poster);
         Picasso.get()
-                .load(Constants.IMAGE_BASE_URL + details.getBackdropPath())
+                .load(Constants.IMAGE_BASE_URL + (details.getPosterPath() != null ? details.getPosterPath() : details.getBackdropPath()))
                 .into(binding.backdrop);
         binding.title.setText(details.getTitle());
         binding.rating.setRating((float) details.getVoteAverage() / 2);
@@ -96,7 +99,7 @@ public class SecondFragment extends Fragment implements Callbacks.HandleSharedEl
             else
                 binding.categories.append(details.getGenres().get(i).getName());
         }
-        binding.release.setText(details.getReleaseDate());
+        binding.duration.setText(Constants.formatTime(details.getRuntime()));
         binding.overview.setText(details.getOverview());
     }
 

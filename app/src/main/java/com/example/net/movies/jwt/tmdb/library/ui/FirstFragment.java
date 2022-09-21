@@ -17,14 +17,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.net.movies.jwt.tmdb.library.adapters.HorizontalAdapter;
 import com.example.net.movies.jwt.tmdb.library.adapters.PopularAdapter;
+import com.example.net.movies.jwt.tmdb.library.callbacks.HandleComingMovieClick;
+import com.example.net.movies.jwt.tmdb.library.callbacks.HandleMovieClick;
 import com.example.net.movies.jwt.tmdb.library.databinding.FragmentFirstBinding;
+import com.example.net.movies.jwt.tmdb.library.model.coming.ComingMovie;
 import com.example.net.movies.jwt.tmdb.library.model.movie.Movie;
-import com.example.net.movies.jwt.tmdb.library.utils.Callbacks;
 import com.example.net.movies.jwt.tmdb.library.utils.Constants;
 import com.example.net.movies.jwt.tmdb.library.utils.ItemDecorator;
 import com.example.net.movies.jwt.tmdb.library.viewmodel.HomeViewModel;
 
-public class FirstFragment extends Fragment implements Callbacks.HandleSharedElement {
+public class FirstFragment extends Fragment implements HandleMovieClick, HandleComingMovieClick {
 
     private FragmentFirstBinding binding;
     private HomeViewModel viewModel;
@@ -39,7 +41,7 @@ public class FirstFragment extends Fragment implements Callbacks.HandleSharedEle
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         popularAdapter = new PopularAdapter(this);
-        comingAdapter = new HorizontalAdapter();
+        comingAdapter = new HorizontalAdapter(this::onComingMovieClick);
         return binding.getRoot();
 
     }
@@ -114,5 +116,14 @@ public class FirstFragment extends Fragment implements Callbacks.HandleSharedEle
         directions.getArguments().putInt("movie_id", movie.getId());
         NavHostFragment.findNavController(FirstFragment.this)
                 .navigate(directions);
+    }
+
+    @Override
+    public void onComingMovieClick(ComingMovie movie, View view) {
+        NavDirections directions = FirstFragmentDirections.actionFirstFragmentToSecondFragment();
+        directions.getArguments().putInt("movie_id", movie.getId());
+        NavHostFragment.findNavController(FirstFragment.this)
+                .navigate(directions);
+
     }
 }

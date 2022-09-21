@@ -145,10 +145,10 @@ public class HomeViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onSuccess(@NonNull MovieDetails movieDetails) {
-                        Log.d(TAG, "On Next Movie Details");
-                        if (movieDetails != null) {
-                            detailsLiveData.setValue(movieDetails);
+                    public void onSuccess(@NonNull MovieDetails details) {
+                        Log.d(TAG, "On Success Movie Details");
+                        if (details != null) {
+                            detailsLiveData.setValue(details);
                         }
                         isDetailsLoading.setValue(true);
                     }
@@ -209,8 +209,8 @@ public class HomeViewModel extends ViewModel {
         return isMovieCreditsLoading;
     }
 
-    public LiveData<MoviesResponse> getMovieSimilar(int movie_id, String key){
-        repo.getMovieSimilar(movie_id,key)
+    public LiveData<MoviesResponse> getMovieSimilar(int movie_id, String key) {
+        repo.getMovieSimilar(movie_id, key)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<MoviesResponse>() {
@@ -247,5 +247,7 @@ public class HomeViewModel extends ViewModel {
         return similarLiveData;
     }
 
-    public LiveData<Boolean> isSimilarMoviesLoading(){return isSimilarMoviesLoading;}
+    public LiveData<Boolean> isSimilarMoviesLoading() {
+        return isSimilarMoviesLoading;
+    }
 }

@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.net.movies.jwt.tmdb.library.callbacks.HandleMovieClick;
 import com.example.net.movies.jwt.tmdb.library.databinding.PopularMovieLayoutBinding;
 import com.example.net.movies.jwt.tmdb.library.model.movie.Movie;
-import com.example.net.movies.jwt.tmdb.library.utils.Callbacks;
 import com.example.net.movies.jwt.tmdb.library.utils.Constants;
 import com.squareup.picasso.Picasso;
 
@@ -19,9 +19,9 @@ import java.util.List;
 public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHolder> {
 
     private List<Movie> movies;
-    private Callbacks.HandleSharedElement listener;
+    private HandleMovieClick listener;
 
-    public PopularAdapter(Callbacks.HandleSharedElement listener) {
+    public PopularAdapter(HandleMovieClick listener) {
         movies = new ArrayList<>();
         this.listener = listener;
     }

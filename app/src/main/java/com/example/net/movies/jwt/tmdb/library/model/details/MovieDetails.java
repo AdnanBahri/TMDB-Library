@@ -21,7 +21,7 @@ public class MovieDetails{
 	private String backdropPath;
 
 	@SerializedName("revenue")
-	private int revenue;
+	private long revenue;
 
 	@SerializedName("genres")
 	private List<GenresItem> genres;
@@ -66,7 +66,7 @@ public class MovieDetails{
 	private double voteAverage;
 
 	@SerializedName("belongs_to_collection")
-	private Object belongsToCollection;
+	private BelongsToCollection belongsToCollection;
 
 	@SerializedName("tagline")
 	private String tagline;
@@ -100,7 +100,7 @@ public class MovieDetails{
 		return backdropPath;
 	}
 
-	public int getRevenue(){
+	public long getRevenue(){
 		return revenue;
 	}
 
@@ -160,7 +160,7 @@ public class MovieDetails{
 		return voteAverage;
 	}
 
-	public Object getBelongsToCollection(){
+	public BelongsToCollection getBelongsToCollection(){
 		return belongsToCollection;
 	}
 
