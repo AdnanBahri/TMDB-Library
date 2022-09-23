@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/nav_home">
 
     <fragment
-        android:id="@+id/FirstFragment"
+        android:id="@+id/nav_home"
         android:name="com.example.net.movies.jwt.tmdb.library.ui.FirstFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
@@ -16,8 +16,10 @@
             app:destination="@id/SecondFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
-            app:popEnterAnim="@anim/to_right"
-            app:popExitAnim="@anim/from_left" />
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="false" />
         <argument
             android:name="movie_id"
             android:defaultValue="0"
@@ -28,4 +30,14 @@
         android:name="com.example.net.movies.jwt.tmdb.library.ui.SecondFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second" />
+    <fragment
+        android:id="@+id/nav_bookmark"
+        android:name="com.example.net.movies.jwt.tmdb.library.ui.BookmarkFragment"
+        android:label="fragment_bookmark"
+        tools:layout="@layout/fragment_bookmark" />
+    <fragment
+        android:id="@+id/nav_search"
+        android:name="com.example.net.movies.jwt.tmdb.library.ui.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
 </navigation>

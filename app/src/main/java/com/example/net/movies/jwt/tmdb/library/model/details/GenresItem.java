@@ -1,20 +1,38 @@
 package com.example.net.movies.jwt.tmdb.library.model.details;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
-public class GenresItem{
+@Entity(tableName = "genre")
+public class GenresItem {
 
-	@SerializedName("name")
-	private String name;
+    @ColumnInfo(name = "name")
+    @SerializedName("name")
+    private String name;
 
-	@SerializedName("id")
-	private int id;
+    @NonNull
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    @SerializedName("id")
+    private int id;
 
-	public String getName(){
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public int getId(){
-		return id;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

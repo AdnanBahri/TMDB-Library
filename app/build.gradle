@@ -85,4 +85,7 @@ dependencies {
 
     // RxJava3 support for Room
     implementation "androidx.room:room-rxjava3:$room_version"
+
+    // Smooth Bottom Navigation Bar
+//    implementation 'com.github.ibrahimsn98:SmoothBottomBar:1.7.9'
 }

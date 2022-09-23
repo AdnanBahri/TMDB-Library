@@ -207,7 +207,7 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/_8sdp"
             android:fontFamily="@font/orienta"
-            android:text="Cast"
+            android:text="Similar Movies"
             android:textColor="@color/white"
             android:textSize="@dimen/_24ssp"
             app:layout_constraintStart_toStartOf="@id/recycler_cast"

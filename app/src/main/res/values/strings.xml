@@ -10,4 +10,9 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="dummy_text">I\'m facing an issue with my ViewModel that I use to hold user login data. I update this ViewModel with user data from fragment A after a user logs in, but when I try to access the data from fragment B the data fields I just set are always null. When fragment B is initialized the user LiveData field is never initially observed, however, when I trigger a change to the user object from fragment B the change is correctly observed within fragment B. It appears that the previous values of the fields in my ViewModel never reach fragment B, but new values do.</string>
+    <string name="action_home">Home</string>
+    <string name="action_search">Search</string>
+    <string name="action_watch">Watch List</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

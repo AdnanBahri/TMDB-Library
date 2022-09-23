@@ -150,7 +150,7 @@ public class HomeViewModel extends ViewModel {
                         if (details != null) {
                             detailsLiveData.setValue(details);
                         }
-                        isDetailsLoading.setValue(true);
+                        isDetailsLoading.setValue(false);
                     }
 
                     @Override
@@ -249,5 +249,9 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<Boolean> isSimilarMoviesLoading() {
         return isSimilarMoviesLoading;
+    }
+
+    public LiveData<Boolean> isMovieDetailsLoading() {
+        return isDetailsLoading;
     }
 }
