@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.net.movies.jwt.tmdb.library.R;
+import com.example.net.movies.jwt.tmdb.library.activities.MainActivity;
 import com.example.net.movies.jwt.tmdb.library.adapters.CastAdapter;
 import com.example.net.movies.jwt.tmdb.library.adapters.MovieAdapter;
 import com.example.net.movies.jwt.tmdb.library.callbacks.HandleMovieClick;
@@ -33,15 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.CompletableObserver;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SecondFragment extends Fragment implements HandleMovieClick {
 
-    // Todo: Add Room Database To Store Favorites Movies
-    // Todo: Create Watch_Now and Watch_list functionalities
 
+    private static Database dbInstance;
     private FragmentSecondBinding binding;
     private HomeViewModel viewModel;
     private CastAdapter castAdapter;
@@ -60,6 +59,7 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
         details = new MovieDetails();
         credits = new CreditsList();
         similar = new ArrayList<>();
+        dbInstance = Database.getInstance(getContext());
         return binding.getRoot();
 
     }
@@ -88,10 +88,21 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
             if (bool) Toast.makeText(getContext(), "Loading Similar", Toast.LENGTH_SHORT).show();
             else similarRecyclerUI(similar);
         });
+        viewModel.isMovieSaved(dbInstance, movie_id).observe(getViewLifecycleOwner(), saved -> {
+            if (saved) {
+//                Toast.makeText(getContext(), "Movie Removed", Toast.LENGTH_SHORT).show();
+                binding.watchLater.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_remove, 0, 0, 0);
+                binding.watchLater.setText("Remove From List");
+            } else {
+//                Toast.makeText(getContext(), "Movie Saved", Toast.LENGTH_SHORT).show();
+                binding.watchLater.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0);
+                binding.watchLater.setText("Add To WatchList");
+            }
+        });
+
 
         binding.watchNow.setOnClickListener(v -> {
-            Database.getInstance(getContext())
-                    .favDao()
+            dbInstance.favDao()
                     .getAllFavMovies()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -109,46 +120,20 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
         });
 
         binding.watchLater.setOnClickListener(v -> {
+            String msg = binding.watchLater.getText().toString();
             FavMovie movie = new FavMovie(movie_id);
             if (details != null) {
                 movie.setPosterPath(details.getPosterPath());
                 movie.setVoteAverage(details.getVoteAverage());
                 movie.setGenres(details.getGenres());
-
-
-                Database.getInstance(getContext())
-                        .favDao()
-                        .save(movie)
-                        .subscribeWith(new CompletableObserver() {
-                            @Override
-                            public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-                                Log.d("Room", "----------------------On Subscribe---------------------");
-                            }
-
-                            @Override
-                            public void onComplete() {
-                                Toast.makeText(getContext(), "The Movie Saved Successfully", Toast.LENGTH_SHORT).show();
-                                Log.d("Room", "----------------------On Complete---------------------");
-                                Log.d("Room", "Movie Saved Successfully to Database");
-                                Log.d("Room", "----------------------On Complete---------------------");
-                            }
-
-                            @Override
-                            public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                                Toast.makeText(getContext(), "The Movie Saved Successfully", Toast.LENGTH_SHORT).show();
-                                Log.d("Room", "----------------------On Error ---------------------");
-                                Log.d("Room", "" + e.getMessage());
-                                Log.d("Room", "----------------------On Error ---------------------");
-                            }
-                        });
             }
+            if (msg.equals("Add To WatchList")) {
+                viewModel.saveMovie(Database.getInstance(getContext()), movie);
+            } else {
+                viewModel.deleteMovie(dbInstance,movie);
+            }
+
         });
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
     }
 
     private void similarRecyclerUI(List<Movie> movies) {
@@ -174,7 +159,7 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
                 .load(Constants.IMAGE_BASE_URL + (details.getPosterPath() != null ? details.getPosterPath() : details.getBackdropPath()))
                 .into(binding.poster);
         Picasso.get()
-                .load(Constants.IMAGE_BASE_URL + (details.getPosterPath() != null ? details.getPosterPath() : details.getBackdropPath()))
+                .load(Constants.IMAGE_BASE_URL + (details.getBackdropPath() != null ? details.getBackdropPath() : details.getPosterPath()))
                 .into(binding.backdrop);
         binding.title.setText(details.getTitle());
         binding.rating.setRating((float) details.getVoteAverage() / 2);
@@ -186,6 +171,7 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
         }
         binding.duration.setText(Constants.formatTime(details.getRuntime()));
         binding.overview.setText(details.getOverview());
+
     }
 
     @Override

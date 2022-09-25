@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.net.movies.jwt.tmdb.library.db.Database;
+import com.example.net.movies.jwt.tmdb.library.db.FavMovie;
 import com.example.net.movies.jwt.tmdb.library.model.coming.ComingList;
 import com.example.net.movies.jwt.tmdb.library.model.credits.CreditsList;
 import com.example.net.movies.jwt.tmdb.library.model.details.MovieDetails;
@@ -14,6 +16,7 @@ import com.example.net.movies.jwt.tmdb.library.repositories.MainRepository;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -34,6 +37,7 @@ public class HomeViewModel extends ViewModel {
     private MutableLiveData<Boolean> isDetailsLoading;
     private MutableLiveData<Boolean> isMovieCreditsLoading;
     private MutableLiveData<Boolean> isSimilarMoviesLoading;
+    private MutableLiveData<Boolean> isMovieSaved;
 
     public HomeViewModel() {
         repo = new MainRepository();
@@ -47,6 +51,7 @@ public class HomeViewModel extends ViewModel {
         isDetailsLoading = new MutableLiveData<>();
         isMovieCreditsLoading = new MutableLiveData<>();
         isSimilarMoviesLoading = new MutableLiveData<>();
+        isMovieSaved = new MutableLiveData<>(false);
     }
 
     public LiveData<MoviesResponse> getPopularMovies(String key) {
@@ -253,5 +258,86 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<Boolean> isMovieDetailsLoading() {
         return isDetailsLoading;
+    }
+
+    public LiveData<Boolean> isMovieSaved(Database instance, int movie_id) {
+        instance.favDao()
+                .getFavMovies(movie_id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<FavMovie>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull FavMovie favMovie) {
+                        isMovieSaved.setValue(true);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        isMovieSaved.setValue(false);
+                    }
+                });
+        return isMovieSaved;
+    }
+
+    public void saveMovie(Database instance, FavMovie movie) {
+        instance.favDao()
+                .save(movie)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+                        Log.d("Room", "----------------------On Subscribe---------------------");
+                    }
+
+                    @Override
+                    public void onComplete() {
+//                        Toast.makeText(getContext(), "The Movie Saved Successfully", Toast.LENGTH_SHORT).show();
+//                        Log.d("Room", "----------------------On Complete---------------------");
+//                        Log.d("Room", "Movie Saved Successfully to Database");
+//                        Log.d("Room", "----------------------On Complete---------------------");
+                        isMovieSaved.setValue(true);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+//                        Toast.makeText(getContext(), "The Movie Saved Successfully", Toast.LENGTH_SHORT).show();
+                        Log.d("HomeViewModel", "----------------------On Error ---------------------");
+                        Log.d("HomeViewModel", "The Movie has not been saved to Database");
+                        Log.d("HomeViewModel", "" + e.getMessage());
+                        Log.d("HomeViewModel", "----------------------On Error ---------------------");
+//                        isMovieSaved.setValue(false);
+                    }
+                });
+    }
+
+    public void deleteMovie(Database instance, FavMovie movie) {
+        instance.favDao()
+                .delete(movie)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        isMovieSaved.setValue(false);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Log.d("HomeViewModel", "----------------------On Error---------------------");
+                        Log.d("HomeViewModel", "Movie Not Deleted");
+                        Log.d("HomeViewModel", "----------------------On Error---------------------");
+                    }
+                });
     }
 }

@@ -28,6 +28,8 @@ import com.example.net.movies.jwt.tmdb.library.viewmodel.HomeViewModel;
 
 public class FirstFragment extends Fragment implements HandleMovieClick, HandleComingMovieClick {
 
+    // Todo: Adding Bookmark's to Up Coming Movies
+
     private FragmentFirstBinding binding;
     private HomeViewModel viewModel;
     private PopularAdapter popularAdapter;

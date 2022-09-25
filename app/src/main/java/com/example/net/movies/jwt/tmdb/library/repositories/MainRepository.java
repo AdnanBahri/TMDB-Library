@@ -12,6 +12,8 @@ import io.reactivex.rxjava3.core.Single;
 
 public class MainRepository {
 
+    // Todo: Need To store all data in the local database for caching purposes
+
     private Api api;
 
     public MainRepository() {

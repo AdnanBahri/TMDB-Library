@@ -19,6 +19,13 @@ import io.reactivex.rxjava3.disposables.Disposable;
 
 public class SearchFragment extends Fragment {
 
+    /*
+     Todo: Code The Search View Functionalities with regards to this remarks:
+     Todo:      * start fetching data after the user enter 3 characters at least && stop typing
+     Todo:      * start when the user start typing again tops api call
+     Todo:      * Try to implement an autocomplete or save the 5 last queries
+    */
+
     private FragmentSearchBinding binding;
 
 
