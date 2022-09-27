@@ -39,4 +39,8 @@ public class MainRepository {
     public Observable<MoviesResponse> getMovieSimilar(int movie_id, String key) {
         return api.getMovieSimilar(movie_id, key);
     }
+
+    public Observable<MoviesResponse> search(String key, String query, boolean include_adult, int page){
+        return api.search(key, query, include_adult , page);
+    }
 }

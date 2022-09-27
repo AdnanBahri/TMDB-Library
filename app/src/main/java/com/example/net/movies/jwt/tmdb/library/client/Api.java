@@ -52,4 +52,12 @@ public interface Api {
             @Path("movie_id") int id,
             @Query("api_key") String api_key
     );
+
+    @GET("search/movie")
+    Observable<MoviesResponse> search(
+            @Query("api_key") String api_key,
+            @Query("query") String query,
+            @Query("include_adult") boolean include_adult,
+            @Query("page") int page
+    );
 }

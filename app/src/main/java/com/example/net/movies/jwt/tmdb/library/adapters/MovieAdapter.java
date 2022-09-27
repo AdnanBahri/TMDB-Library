@@ -24,6 +24,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     public void setList(List<Movie> list) {
         this.list = list;
+        notifyDataSetChanged();
     }
 
 
