@@ -1,5 +1,6 @@
 package com.example.net.movies.jwt.tmdb.library.client;
 
+import com.example.net.movies.jwt.tmdb.library.model.actor.ActorResponse;
 import com.example.net.movies.jwt.tmdb.library.model.coming.ComingList;
 import com.example.net.movies.jwt.tmdb.library.model.credits.CreditsList;
 import com.example.net.movies.jwt.tmdb.library.model.details.MovieDetails;
@@ -59,5 +60,17 @@ public interface Api {
             @Query("query") String query,
             @Query("include_adult") boolean include_adult,
             @Query("page") int page
+    );
+
+    @GET("person/{actor_id}")
+    Single<ActorResponse> getActorDetails(
+            @Path("actor_id") String actor_id,
+            @Query("api_key") String api_key
+    );
+
+    @GET("discover/movie")
+    Observable<MoviesResponse> getMoviesByActorId(
+            @Query("api_key") String api_key,
+            @Query("with_cast") Integer actor_id
     );
 }

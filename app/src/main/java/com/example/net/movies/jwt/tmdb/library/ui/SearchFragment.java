@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.net.movies.jwt.tmdb.library.R;
@@ -82,7 +84,7 @@ public class SearchFragment extends Fragment implements HandleMovieClick {
             }
         });
         RxSearchObservable.fromView(binding.search)
-                .debounce(300, TimeUnit.MILLISECONDS)
+                .debounce(600, TimeUnit.MILLISECONDS)
                 .filter(text -> !text.isEmpty() && text.length() >= 3 && text.trim().length() != 0)
                 .map(String::toLowerCase)
                 .distinctUntilChanged()
@@ -113,5 +115,9 @@ public class SearchFragment extends Fragment implements HandleMovieClick {
 
     @Override
     public void onMovieClick(Movie movie, View view) {
+        NavDirections directions = SearchFragmentDirections.actionNavSearchToSecondFragment();
+        directions.getArguments().putInt("movie_id", movie.getId());
+        NavHostFragment.findNavController(this)
+                .navigate(directions);
     }
 }

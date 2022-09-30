@@ -2,6 +2,7 @@ package com.example.net.movies.jwt.tmdb.library.repositories;
 
 import com.example.net.movies.jwt.tmdb.library.client.Api;
 import com.example.net.movies.jwt.tmdb.library.client.RetrofitClient;
+import com.example.net.movies.jwt.tmdb.library.model.actor.ActorResponse;
 import com.example.net.movies.jwt.tmdb.library.model.coming.ComingList;
 import com.example.net.movies.jwt.tmdb.library.model.credits.CreditsList;
 import com.example.net.movies.jwt.tmdb.library.model.details.MovieDetails;
@@ -40,7 +41,15 @@ public class MainRepository {
         return api.getMovieSimilar(movie_id, key);
     }
 
-    public Observable<MoviesResponse> search(String key, String query, boolean include_adult, int page){
-        return api.search(key, query, include_adult , page);
+    public Observable<MoviesResponse> search(String key, String query, boolean include_adult, int page) {
+        return api.search(key, query, include_adult, page);
+    }
+
+    public Observable<MoviesResponse> getMoviesByActorId(String key, Integer actor_id) {
+        return api.getMoviesByActorId(key, actor_id);
+    }
+
+    public Single<ActorResponse> getActorDetails(String key, Integer actor_id) {
+        return api.getActorDetails(String.valueOf(actor_id), key);
     }
 }

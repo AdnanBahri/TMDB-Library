@@ -59,6 +59,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                     .into(binding.poster);
             binding.title.setText(movie.getTitle());
             binding.rating.setRating((int) movie.getVoteAverage() / 2);
+
         }
     }
 }

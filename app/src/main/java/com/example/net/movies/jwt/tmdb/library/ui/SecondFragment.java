@@ -11,17 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.net.movies.jwt.tmdb.library.R;
-import com.example.net.movies.jwt.tmdb.library.activities.MainActivity;
 import com.example.net.movies.jwt.tmdb.library.adapters.CastAdapter;
 import com.example.net.movies.jwt.tmdb.library.adapters.MovieAdapter;
+import com.example.net.movies.jwt.tmdb.library.callbacks.CastListener;
 import com.example.net.movies.jwt.tmdb.library.callbacks.HandleMovieClick;
 import com.example.net.movies.jwt.tmdb.library.databinding.FragmentSecondBinding;
 import com.example.net.movies.jwt.tmdb.library.db.Database;
 import com.example.net.movies.jwt.tmdb.library.db.FavMovie;
+import com.example.net.movies.jwt.tmdb.library.model.credits.CastItem;
 import com.example.net.movies.jwt.tmdb.library.model.credits.CreditsList;
 import com.example.net.movies.jwt.tmdb.library.model.details.MovieDetails;
 import com.example.net.movies.jwt.tmdb.library.model.movie.Movie;
@@ -37,7 +40,7 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class SecondFragment extends Fragment implements HandleMovieClick {
+public class SecondFragment extends Fragment implements HandleMovieClick, CastListener {
 
 
     private static Database dbInstance;
@@ -48,6 +51,7 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
     private MovieDetails details;
     private CreditsList credits;
     private List<Movie> similar;
+    private int movie_id;
 
     @Override
     public View onCreateView(
@@ -56,6 +60,8 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
     ) {
 
         binding = FragmentSecondBinding.inflate(inflater, container, false);
+
+        movie_id = getArguments().getInt("movie_id");
         details = new MovieDetails();
         credits = new CreditsList();
         similar = new ArrayList<>();
@@ -67,38 +73,6 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 //        Log.d("Second Fragment", getArguments().getInt("movie_id") + "");
-        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        int movie_id = getArguments().getInt("movie_id");
-        viewModel.getMovieDetails(movie_id, Constants.API_KEY)
-                .observe(getViewLifecycleOwner(), details1 -> this.details = details1);
-        viewModel.getMovieCredits(movie_id, Constants.API_KEY)
-                .observe(getViewLifecycleOwner(), creditsList -> this.credits = creditsList);
-        viewModel.getMovieSimilar(movie_id, Constants.API_KEY)
-                .observe(getViewLifecycleOwner(), response -> similar = response.getResults());
-
-        viewModel.isMovieDetailsLoading().observe(getViewLifecycleOwner(), bool -> {
-            if (bool) Toast.makeText(getContext(), "Loading Details", Toast.LENGTH_SHORT).show();
-            else populateUI(details);
-        });
-        viewModel.isMovieCreditsLoading().observe(getViewLifecycleOwner(), bool -> {
-            if (bool) Toast.makeText(getContext(), "Loading Credits", Toast.LENGTH_SHORT).show();
-            else castRecyclerUI(credits);
-        });
-        viewModel.isSimilarMoviesLoading().observe(getViewLifecycleOwner(), bool -> {
-            if (bool) Toast.makeText(getContext(), "Loading Similar", Toast.LENGTH_SHORT).show();
-            else similarRecyclerUI(similar);
-        });
-        viewModel.isMovieSaved(dbInstance, movie_id).observe(getViewLifecycleOwner(), saved -> {
-            if (saved) {
-//                Toast.makeText(getContext(), "Movie Removed", Toast.LENGTH_SHORT).show();
-                binding.watchLater.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_remove, 0, 0, 0);
-                binding.watchLater.setText("Remove From List");
-            } else {
-//                Toast.makeText(getContext(), "Movie Saved", Toast.LENGTH_SHORT).show();
-                binding.watchLater.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0);
-                binding.watchLater.setText("Add To WatchList");
-            }
-        });
 
 
         binding.watchNow.setOnClickListener(v -> {
@@ -130,9 +104,45 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
             if (msg.equals("Add To WatchList")) {
                 viewModel.saveMovie(Database.getInstance(getContext()), movie);
             } else {
-                viewModel.deleteMovie(dbInstance,movie);
+                viewModel.deleteMovie(dbInstance, movie);
             }
 
+        });
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        viewModel.getMovieDetails(movie_id, Constants.API_KEY)
+                .observe(getViewLifecycleOwner(), details1 -> this.details = details1);
+        viewModel.getMovieCredits(movie_id, Constants.API_KEY)
+                .observe(getViewLifecycleOwner(), creditsList -> this.credits = creditsList);
+        viewModel.getMovieSimilar(movie_id, Constants.API_KEY)
+                .observe(getViewLifecycleOwner(), response -> similar = response.getResults());
+
+        viewModel.isMovieDetailsLoading().observe(getViewLifecycleOwner(), bool -> {
+            if (bool) Toast.makeText(getContext(), "Loading Details", Toast.LENGTH_SHORT).show();
+            else populateUI(details);
+        });
+        viewModel.isMovieCreditsLoading().observe(getViewLifecycleOwner(), bool -> {
+            if (bool) Toast.makeText(getContext(), "Loading Credits", Toast.LENGTH_SHORT).show();
+            else castRecyclerUI(credits);
+        });
+        viewModel.isSimilarMoviesLoading().observe(getViewLifecycleOwner(), bool -> {
+            if (bool) Toast.makeText(getContext(), "Loading Similar", Toast.LENGTH_SHORT).show();
+            else similarRecyclerUI(similar);
+        });
+        viewModel.isMovieSaved(dbInstance, movie_id).observe(getViewLifecycleOwner(), saved -> {
+            if (saved) {
+//                Toast.makeText(getContext(), "Movie Removed", Toast.LENGTH_SHORT).show();
+                binding.watchLater.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_remove, 0, 0, 0);
+                binding.watchLater.setText("Remove From List");
+            } else {
+//                Toast.makeText(getContext(), "Movie Saved", Toast.LENGTH_SHORT).show();
+                binding.watchLater.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0);
+                binding.watchLater.setText("Add To WatchList");
+            }
         });
     }
 
@@ -146,7 +156,7 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
     }
 
     private void castRecyclerUI(CreditsList creditsList) {
-        castAdapter = new CastAdapter();
+        castAdapter = new CastAdapter(this::onCastClick);
         castAdapter.setCastItems(creditsList.getCast());
         binding.recyclerCast.setHasFixedSize(true);
         binding.recyclerCast.setAdapter(castAdapter);
@@ -183,5 +193,12 @@ public class SecondFragment extends Fragment implements HandleMovieClick {
     @Override
     public void onMovieClick(Movie movie, View view) {
 
+    }
+
+    @Override
+    public void onCastClick(CastItem cast, View view) {
+        NavDirections directions = SecondFragmentDirections.actionDetailsToCast();
+        directions.getArguments().putInt("actor_id", cast.getId());
+        NavHostFragment.findNavController(SecondFragment.this).navigate(directions);
     }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.net.movies.jwt.tmdb.library.db.Database;
 import com.example.net.movies.jwt.tmdb.library.db.FavMovie;
+import com.example.net.movies.jwt.tmdb.library.model.actor.ActorResponse;
 import com.example.net.movies.jwt.tmdb.library.model.coming.ComingList;
 import com.example.net.movies.jwt.tmdb.library.model.credits.CreditsList;
 import com.example.net.movies.jwt.tmdb.library.model.details.MovieDetails;
@@ -34,6 +35,8 @@ public class HomeViewModel extends ViewModel {
     private final MutableLiveData<CreditsList> creditsLiveData;
     private final MutableLiveData<MoviesResponse> similarLiveData;
     private final MutableLiveData<List<Movie>> searchLiveData;
+    private final MutableLiveData<MoviesResponse> actorMoviesLiveData;
+    private final MutableLiveData<ActorResponse> actorDetailsLiveData;
     private final MutableLiveData<Boolean> isPopularLoading;
     private final MutableLiveData<Boolean> isComingLoading;
     private final MutableLiveData<Boolean> isDetailsLoading;
@@ -56,6 +59,8 @@ public class HomeViewModel extends ViewModel {
         isDetailsLoading = new MutableLiveData<>();
         isMovieCreditsLoading = new MutableLiveData<>();
         isSimilarMoviesLoading = new MutableLiveData<>();
+        actorMoviesLiveData = new MutableLiveData<>();
+        actorDetailsLiveData = new MutableLiveData<>();
         isMovieSaved = new MutableLiveData<>(false);
         isSearchingMovies = new MutableLiveData<>(false);
     }
@@ -350,40 +355,42 @@ public class HomeViewModel extends ViewModel {
     public void search(String key, String query, boolean include_adult, int page) {
         isSearchingMovies.setValue(true);
         repo.search(key, query, include_adult, page)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<MoviesResponse>() {
-                @Override
-                public void onSubscribe(@NonNull Disposable d) {
-                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MoviesResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-                @Override
-                public void onNext(@NonNull MoviesResponse response) {
-                    if (response != null)
-                        searchLiveData.setValue(response.getResults());
-                    Log.d("HomeViewModel", "----------------------On Next---------------------");
-                    Log.d("HomeViewModel", "Search for Movies Based on Query");
-                    Log.d("HomeViewModel", "----------------------On Next---------------------");
-                }
+                    @Override
+                    public void onNext(@NonNull MoviesResponse response) {
+                        if (response != null)
+                            searchLiveData.setValue(response.getResults());
+                        Log.d("HomeViewModel", "----------------------On Next---------------------");
+                        Log.d("HomeViewModel", "Search for Movies Based on Query");
+                        Log.d("HomeViewModel", "----------------------On Next---------------------");
+                    }
 
-                @Override
-                public void onError(@NonNull Throwable e) {
-                    isSearchingMovies.setValue(false);
-                    Log.d("HomeViewModel", "----------------------On Error---------------------");
-                    Log.d("HomeViewModel", "Search for Movies Based on Query");
-                    Log.e("HomeViewModel", e.getMessage());
-                    e.printStackTrace();
-                    Log.d("HomeViewModel", "----------------------On Error---------------------");
-                }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        isSearchingMovies.setValue(false);
+                        Log.d("HomeViewModel", "----------------------On Error---------------------");
+                        Log.d("HomeViewModel", "Search for Movies Based on Query");
+                        Log.e("HomeViewModel", e.getMessage());
+                        e.printStackTrace();
+                        Log.d("HomeViewModel", "----------------------On Error---------------------");
+                    }
 
-                @Override
-                public void onComplete() {
-                    isSearchingMovies.setValue(false);
-                }
-            });
+                    @Override
+                    public void onComplete() {
+                        isSearchingMovies.setValue(false);
+                    }
+                });
     }
 
-    public LiveData<List<Movie>> getSearchedMovies(){return searchLiveData;}
+    public LiveData<List<Movie>> getSearchedMovies() {
+        return searchLiveData;
+    }
 
     private void changeState(boolean state) {
         isSearchingMovies.setValue(state);
@@ -391,5 +398,69 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<Boolean> isSearchingMovies() {
         return isSearchingMovies;
+    }
+
+    public LiveData<MoviesResponse> getMoviesByActorId(String key, Integer actor_id) {
+        repo.getMoviesByActorId(key, actor_id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MoviesResponse>() {
+
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d(TAG, "Subscribe On Actor Movies");
+                    }
+
+                    @Override
+                    public void onNext(MoviesResponse moviesResponse) {
+                        Log.d(TAG, "On Next Actor Movies");
+                        actorMoviesLiveData.setValue(moviesResponse);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.d(TAG, "On Error On Actor Movies");
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        Log.e(TAG, t.getMessage());
+                        t.printStackTrace();
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        actorMoviesLiveData.setValue(null);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "On Complete Actor Movies");
+                    }
+                });
+        return actorMoviesLiveData;
+    }
+
+    public LiveData<ActorResponse> getActorDetails(String key, Integer actor_id) {
+        repo.getActorDetails(key, actor_id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<ActorResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d(TAG, "On Subscribe On Actor Details Movies");
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull ActorResponse actorResponse) {
+                        Log.d(TAG, "On Success On Actor Details Movies");
+                        actorDetailsLiveData.setValue(actorResponse);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Log.d(TAG, "On Error On Actor Details Movies");
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        Log.e(TAG, e.getMessage());
+                        e.printStackTrace();
+                        Log.d("----", "---------------------------------------------------------------------------------------------------");
+                        actorMoviesLiveData.setValue(null);
+                    }
+                });
+        return actorDetailsLiveData;
     }
 }

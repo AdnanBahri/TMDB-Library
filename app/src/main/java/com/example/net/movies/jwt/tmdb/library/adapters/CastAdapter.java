@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.net.movies.jwt.tmdb.library.callbacks.CastListener;
 import com.example.net.movies.jwt.tmdb.library.databinding.MovieCastLayoutBinding;
 import com.example.net.movies.jwt.tmdb.library.model.credits.CastItem;
 import com.example.net.movies.jwt.tmdb.library.utils.Constants;
@@ -18,9 +19,11 @@ import java.util.List;
 public class CastAdapter extends RecyclerView.Adapter<CastAdapter.ViewHolder> {
 
     private List<CastItem> castItems;
+    private CastListener listener;
 
-    public CastAdapter() {
+    public CastAdapter(CastListener listener) {
         castItems = new ArrayList<>();
+        this.listener = listener;
     }
 
     public void setCastItems(List<CastItem> castItems) {
@@ -56,7 +59,10 @@ public class CastAdapter extends RecyclerView.Adapter<CastAdapter.ViewHolder> {
             Picasso.get()
                     .load(Constants.IMAGE_BASE_URL + item.getProfilePath())
                     .into(binding.avatar);
-            binding.avatar.setOnClickListener(v -> Log.d("Cast Adapter", item.getName() + ""));
+            binding.avatar.setOnClickListener(v -> {
+                Log.d("Cast Adapter", item.getName() + " , " + item.getId());
+                listener.onCastClick(item, binding.getRoot());
+            });
         }
     }
 }
