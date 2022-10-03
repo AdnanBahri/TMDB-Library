@@ -29,7 +29,8 @@ public class GridDecoration extends RecyclerView.ItemDecoration {
         } else {
             outRect.left = space / 2;
         }
-        if (position != 0 && position != 1)
-            outRect.top = space;
+        outRect.bottom = space;
+//        if (position != 0 && position != 1)
+//            outRect.top = space;
     }
 }

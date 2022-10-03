@@ -58,40 +58,38 @@ public class SecondFragment extends Fragment implements HandleMovieClick, CastLi
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+            binding = FragmentSecondBinding.inflate(inflater, container, false);
 
-        binding = FragmentSecondBinding.inflate(inflater, container, false);
-
-        movie_id = getArguments().getInt("movie_id");
-        details = new MovieDetails();
-        credits = new CreditsList();
-        similar = new ArrayList<>();
-        dbInstance = Database.getInstance(getContext());
+            movie_id = getArguments().getInt("movie_id");
+            details = new MovieDetails();
+            credits = new CreditsList();
+            similar = new ArrayList<>();
+            dbInstance = Database.getInstance(getContext());
         return binding.getRoot();
 
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        Log.d("Second Fragment", getArguments().getInt("movie_id") + "");
 
 
-        binding.watchNow.setOnClickListener(v -> {
-            dbInstance.favDao()
-                    .getAllFavMovies()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(favMovies -> {
-                        if (favMovies != null) {
-                            Log.d("Room", "----------------------On Result---------------------");
-                            Log.d("Room", "Saved Movie List Size : " + favMovies.size());
-                            Log.d("Room", "----------------------On Result---------------------");
-                        } else {
-                            Log.d("Room", "----------------------On Result---------------------");
-                            Log.d("Room", "Database is Empty");
-                            Log.d("Room", "----------------------On Result---------------------");
-                        }
-                    });
-        });
+            binding.watchNow.setOnClickListener(v -> {
+                dbInstance.favDao()
+                        .getAllFavMovies()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(favMovies -> {
+                            if (favMovies != null) {
+                                Log.d("Room", "----------------------On Result---------------------");
+                                Log.d("Room", "Saved Movie List Size : " + favMovies.size());
+                                Log.d("Room", "----------------------On Result---------------------");
+                            } else {
+                                Log.d("Room", "----------------------On Result---------------------");
+                                Log.d("Room", "Database is Empty");
+                                Log.d("Room", "----------------------On Result---------------------");
+                            }
+                        });
+            });
 
         binding.watchLater.setOnClickListener(v -> {
             String msg = binding.watchLater.getText().toString();
@@ -147,7 +145,7 @@ public class SecondFragment extends Fragment implements HandleMovieClick, CastLi
     }
 
     private void similarRecyclerUI(List<Movie> movies) {
-        adapter = new MovieAdapter();
+        adapter = new MovieAdapter(this::onMovieClick);
         adapter.setList(movies);
         binding.recyclerSimilar.setHasFixedSize(true);
         binding.recyclerSimilar.setAdapter(adapter);
@@ -185,6 +183,11 @@ public class SecondFragment extends Fragment implements HandleMovieClick, CastLi
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
@@ -192,7 +195,9 @@ public class SecondFragment extends Fragment implements HandleMovieClick, CastLi
 
     @Override
     public void onMovieClick(Movie movie, View view) {
-
+        NavDirections directions = SecondFragmentDirections.actionDetailsToDetails();
+        directions.getArguments().putInt("movie_id", movie.getId());
+        NavHostFragment.findNavController(SecondFragment.this).navigate(directions);
     }
 
     @Override

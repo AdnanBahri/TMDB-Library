@@ -27,6 +27,9 @@ public interface dao {
     @Delete
     Completable delete(FavMovie movie);
 
+    @Query("DELETE FROM movie WHERE id=:movie_id")
+    Completable deleteMovieById(int movie_id);
+
     @Query("DELETE FROM movie")
     Completable deleteAll();
 }

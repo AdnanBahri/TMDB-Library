@@ -31,6 +31,10 @@
             app:destination="@id/castFragment"
             app:popUpToInclusive="true"
             app:popUpToSaveState="true" />
+        <action
+            android:id="@+id/action_details_to_details"
+            app:destination="@id/SecondFragment"
+            app:popUpToSaveState="true" />
     </fragment>
     <fragment
         android:id="@+id/nav_bookmark"
@@ -54,5 +58,9 @@
         android:id="@+id/castFragment"
         android:name="com.example.net.movies.jwt.tmdb.library.ui.CastFragment"
         android:label="fragment_cast"
-        tools:layout="@layout/fragment_cast" />
+        tools:layout="@layout/fragment_cast" >
+        <action
+            android:id="@+id/action_castFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+    </fragment>
 </navigation>

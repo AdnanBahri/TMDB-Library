@@ -10,18 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.net.movies.jwt.tmdb.library.adapters.MovieAdapter;
+import com.example.net.movies.jwt.tmdb.library.callbacks.HandleMovieClick;
 import com.example.net.movies.jwt.tmdb.library.databinding.FragmentCastBinding;
 import com.example.net.movies.jwt.tmdb.library.model.actor.ActorResponse;
+import com.example.net.movies.jwt.tmdb.library.model.movie.Movie;
 import com.example.net.movies.jwt.tmdb.library.utils.Constants;
 import com.example.net.movies.jwt.tmdb.library.utils.GridDecoration;
 import com.example.net.movies.jwt.tmdb.library.viewmodel.HomeViewModel;
 import com.squareup.picasso.Picasso;
 
 
-public class CastFragment extends Fragment {
+public class CastFragment extends Fragment implements HandleMovieClick {
 
     private FragmentCastBinding binding;
     private HomeViewModel viewModel;
@@ -33,7 +37,7 @@ public class CastFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentCastBinding.inflate(inflater, container, false);
         actor_id = getArguments().getInt("actor_id");
-        adapter = new MovieAdapter();
+        adapter = new MovieAdapter(this::onMovieClick);
         binding.recyclerMovies.setLayoutManager(new GridLayoutManager(getContext(), 2));
         binding.recyclerMovies.addItemDecoration(new GridDecoration(2, false, 20));
         binding.recyclerMovies.setHasFixedSize(true);
@@ -76,4 +80,10 @@ public class CastFragment extends Fragment {
         binding.biography.setText(response.getBiography());
     }
 
+    @Override
+    public void onMovieClick(Movie movie, View view) {
+        NavDirections directions = CastFragmentDirections.actionCastFragmentToSecondFragment();
+        directions.getArguments().putInt("movie_id", movie.getId());
+        NavHostFragment.findNavController(CastFragment.this).navigate(directions);
+    }
 }

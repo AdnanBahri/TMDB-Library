@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.net.movies.jwt.tmdb.library.callbacks.HandleMovieClick;
 import com.example.net.movies.jwt.tmdb.library.databinding.MovieLayoutBinding;
 import com.example.net.movies.jwt.tmdb.library.model.movie.Movie;
 import com.example.net.movies.jwt.tmdb.library.utils.Constants;
@@ -17,9 +18,11 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
     private List<Movie> list;
+    private HandleMovieClick listener;
 
-    public MovieAdapter() {
+    public MovieAdapter(HandleMovieClick listener) {
         list = new ArrayList<>();
+        this.listener = listener;
     }
 
     public void setList(List<Movie> list) {
@@ -59,7 +62,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                     .into(binding.poster);
             binding.title.setText(movie.getTitle());
             binding.rating.setRating((int) movie.getVoteAverage() / 2);
-
+            binding.movie.setOnClickListener(v -> listener.onMovieClick(movie, binding.getRoot()));
         }
     }
 }
